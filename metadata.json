@@ -1,0 +1,6 @@
+{
+  "name": "EventPulse",
+  "description": "Smart Event Experience platform with crowd-aware navigation, accessibility-first routing, real-time updates, emergency SOS, and context-aware intelligence.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
