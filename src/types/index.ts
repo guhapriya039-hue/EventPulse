@@ -4,6 +4,8 @@ export interface Coordinates {
   x: number;
   y: number;
   floor: number;
+  width?: number;
+  height?: number;
 }
 
 export interface ZoneAccessibility {

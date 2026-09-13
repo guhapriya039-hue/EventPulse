@@ -68,6 +68,18 @@ export const SmartMap: React.FC = () => {
     return '#10b981'; // emerald
   };
 
+  const getZoneDimensions = (zone: typeof zones[0]) => {
+    if (zone.coordinates.width && zone.coordinates.height) {
+      return { width: zone.coordinates.width, height: zone.coordinates.height };
+    }
+    if (zone.id === 'zone-main-stage') return { width: 140, height: 90 };
+    if (zone.category === 'Stage' || zone.category === 'Hall') return { width: 116, height: 74 };
+    if (zone.category === 'Dining') return { width: 106, height: 68 };
+    if (zone.category === 'Restroom') return { width: 94, height: 58 };
+    if (zone.category === 'Service') return { width: 96, height: 58 };
+    return { width: 92, height: 56 };
+  };
+
   return (
     <div className="space-y-5 pb-12">
       {/* Top Routing Header & Destination Selector */}
@@ -341,6 +353,9 @@ export const SmartMap: React.FC = () => {
                 const isCurrent = zone.id === profile.currentLocationId;
                 const isHovered = zone.id === hoveredZoneId;
                 const fillColor = getZoneFillColor(zone);
+                const { width, height } = getZoneDimensions(zone);
+                const left = zone.coordinates.x - width / 2;
+                const top = zone.coordinates.y - height / 2;
 
                 return (
                   <g
@@ -353,10 +368,10 @@ export const SmartMap: React.FC = () => {
                   >
                     {/* Zone background boundary */}
                     <rect
-                      x={zone.coordinates.x - zone.coordinates.width / 2}
-                      y={zone.coordinates.y - zone.coordinates.height / 2}
-                      width={zone.coordinates.width}
-                      height={zone.coordinates.height}
+                      x={left}
+                      y={top}
+                      width={width}
+                      height={height}
                       rx="12"
                       fill={isTarget ? '#1e1b4b' : '#1e293b'}
                       stroke={isTarget ? '#818cf8' : isHovered ? '#94a3b8' : '#334155'}
@@ -366,8 +381,8 @@ export const SmartMap: React.FC = () => {
 
                     {/* Crowd density indicator pill in top-right of room */}
                     <rect
-                      x={zone.coordinates.x + zone.coordinates.width / 2 - 42}
-                      y={zone.coordinates.y - zone.coordinates.height / 2 + 6}
+                      x={left + width - 42}
+                      y={top + 6}
                       width="36"
                       height="16"
                       rx="4"
@@ -375,8 +390,8 @@ export const SmartMap: React.FC = () => {
                       opacity="0.95"
                     />
                     <text
-                      x={zone.coordinates.x + zone.coordinates.width / 2 - 24}
-                      y={zone.coordinates.y - zone.coordinates.height / 2 + 18}
+                      x={left + width - 24}
+                      y={top + 18}
                       fill="#ffffff"
                       fontSize="9"
                       fontWeight="bold"
@@ -411,8 +426,8 @@ export const SmartMap: React.FC = () => {
                     {/* Accessibility icon badges */}
                     {zone.accessibility.hasRamp && (
                       <circle
-                        cx={zone.coordinates.x - zone.coordinates.width / 2 + 14}
-                        cy={zone.coordinates.y - zone.coordinates.height / 2 + 14}
+                        cx={left + 14}
+                        cy={top + 14}
                         r="6"
                         fill="#0284c7"
                       />
@@ -422,7 +437,7 @@ export const SmartMap: React.FC = () => {
               })}
 
               {/* ORIGIN PIN (You Are Here) */}
-              <g transform={`translate(${currentStartZone.coordinates.x}, ${currentStartZone.coordinates.y})`}>
+              <g transform={`translate(${currentStartZone?.coordinates?.x ?? 120}, ${currentStartZone?.coordinates?.y ?? 520})`}>
                 <circle r="14" fill="#10b981" opacity="0.3" className="animate-ping" />
                 <circle r="9" fill="#10b981" stroke="#ffffff" strokeWidth="2.5" />
                 <text y="24" fill="#34d399" fontSize="10" fontWeight="bold" textAnchor="middle">
@@ -432,7 +447,7 @@ export const SmartMap: React.FC = () => {
 
               {/* DESTINATION PIN */}
               {targetZone && (
-                <g transform={`translate(${targetZone.coordinates.x}, ${targetZone.coordinates.y - 20})`}>
+                <g transform={`translate(${targetZone.coordinates?.x ?? 220}, ${(targetZone.coordinates?.y ?? 430) - 20})`}>
                   <circle r="12" fill="#6366f1" opacity="0.4" className="animate-pulse" />
                   <path
                     d="M 0 -16 C -7 -16 -12 -11 -12 -4 C -12 6 0 16 0 16 C 0 16 12 6 12 -4 C 12 -11 7 -16 0 -16 Z"
